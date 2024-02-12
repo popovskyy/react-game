@@ -1,5 +1,5 @@
 import useData from "./useData.ts";
-import { Genre } from "./useGenres.ts";
+import { GameQuery } from "../App.tsx";
 
 export interface Game {
   metacritic: number;
@@ -7,6 +7,7 @@ export interface Game {
   name: string;
   background_image: string;
   parent_platforms: { platform: Platform }[];
+  rating_top: number;
 }
 
 export interface Platform {
@@ -14,14 +15,18 @@ export interface Platform {
   name: string;
   slug: string;
 }
-const useGames = (
-  selectedGenre: Genre | null,
-  selectedPlatform: Platform | null,
-) =>
+const useGames = (gameQuery: GameQuery) =>
   useData<Game>(
     "/games",
-    { params: { genres: selectedGenre?.id, platforms: selectedPlatform?.id } },
-    [selectedGenre?.id, selectedPlatform?.id],
+    {
+      params: {
+        genres: gameQuery.genre?.id,
+        platforms: gameQuery.platform?.id,
+        ordering: gameQuery.sortOrder,
+        search: gameQuery.searchText,
+      },
+    },
+    [gameQuery],
   );
 
 export default useGames;
